@@ -26,7 +26,7 @@ print("Connecting to AP...")
 while not esp.is_connected:
     try:
         esp.connect_AP(secrets["ssid"], secrets["password"])
-    except RuntimeError as e:
+    except (RuntimeError, ConnectionError) as e:
         print("could not connect to AP, retrying: ", e)
         continue
 print("Connected to", str(esp.ssid, "utf-8"), "\tRSSI:", esp.rssi)
@@ -50,12 +50,21 @@ def led_off(request):  # pylint: disable=unused-argument
     status_light.fill(0)
     return ("200 OK", [], "led off!")
 
+@web_app.route("/")
+def index(request):
+    print("index!")
+    with open("lib/static/index.html") as f:
+        print("getting HTML...")
+        html =  ''.join(f.readlines())
+    print("got HTML")
+    return("200 OK", [], html)
+
 
 # Here we setup our server, passing in our web_app as the application
 server.set_interface(esp)
 wsgiServer = server.WSGIServer(80, application=web_app)
 
-print("open this IP in your browser: ", esp.pretty_ip(esp.ip_address) + "/led_on/255/0/0")
+print("open this IP in your browser: ", esp.pretty_ip(esp.ip_address))
 
 # print(esp.get_time())
 # Start the server
