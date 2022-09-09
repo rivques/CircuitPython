@@ -11,12 +11,12 @@
     <input type="checkbox" id="enable">
     <br />
     <label>Red: </label>
-    <input class="must-enable" id="red" value="127" type="number" min="0" max="255" disabled>
+    <input class="must-enable" id="red" value="127" type="range" min="0" max="255" disabled>
     <label>Green: </label>
-    <input class="must-enable" id="green" value="0" type="number" min="0" max="255" disabled>
+    <input class="must-enable" id="green" value="0" type="range" min="0" max="255" disabled>
     <label>Blue: </label>
-    <input class="must-enable" id="blue" value="0" type="number" min="0" max="255" disabled>
-    <button class="must-enable" id="set" disabled>Set</button>
+    <input class="must-enable" id="blue" value="0" type="range" min="0" max="255" disabled>
+    <!-- <button class="must-enable" id="set" disabled>Set</button> -->
     <script>
         document.getElementById("enable").addEventListener("click", () => {
             if(document.getElementById("enable").checked){
@@ -33,10 +33,16 @@
                 });
             }
         })
-        document.getElementById("set").addEventListener("click", () => {
-            console.log("Changed!")
-            fetch(`/led_on/${document.getElementById("red").value}/${document.getElementById("green").value}/${document.getElementById("blue").value}`)
-        })
+        // document.getElementById("set").addEventListener("click", () => {
+        //     console.log("Changed!")
+        //     fetch(`/led_on/${document.getElementById("red").value}/${document.getElementById("green").value}/${document.getElementById("blue").value}`)
+        // })
+        document.querySelectorAll("input[type=\"range\"]").forEach(element => {
+            element.addEventListener("change", () => {
+                console.log("Changed!")
+                fetch(`/led_on/${document.getElementById("red").value}/${document.getElementById("green").value}/${document.getElementById("blue").value}`)
+            })
+        });
     </script>
 </body>
 </html>
