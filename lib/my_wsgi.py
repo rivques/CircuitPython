@@ -5,19 +5,25 @@
 """
 `adafruit_esp32spi_wsgiserver`
 ================================================================================
+
 A simple WSGI (Web Server Gateway Interface) server that interfaces with the ESP32 over SPI.
 Opens a specified port on the ESP32 to listen for incoming HTTP Requests and
 Accepts an Application object that must be callable, which gets called
 whenever a new HTTP Request has been received.
+
 The Application MUST accept 2 ordered parameters:
     1. environ object (incoming request data)
     2. start_response function. Must be called before the Application
         callable returns, in order to set the response status and headers.
+
 The Application MUST return a single string in a list,
 which is the response data
+
 Requires update_poll being called in the applications main event loop.
+
 For more details about Python WSGI see:
 https://www.python.org/dev/peps/pep-0333/
+
 * Author(s): Matt Costi
 """
 # pylint: disable=no-name-in-module
@@ -97,7 +103,6 @@ class WSGIServer:
         if self._client_sock and self._client_sock.available():
             environ = self._get_environ(self._client_sock)
             result = self.application(environ, self._start_response)
-            print(f"update result is {result}, type is {type(result)}")
             self.finish_response(result)
 
     def finish_response(self, result):
@@ -105,6 +110,7 @@ class WSGIServer:
         Called after the application callbile returns result data to respond with.
         Creates the HTTP Response payload from the response_headers and results data,
         and sends it back to client.
+
         :param string result: the data string to send back in the response to the client.
         """
         try:
@@ -113,17 +119,16 @@ class WSGIServer:
                 response += "{0}: {1}\r\n".format(*header)
             response += "\r\n"
             self._client_sock.send(response.encode("utf-8"))
-            print("result is ", result)
-            if isinstance(result, bytes):
+            if isinstance(result, bytes): # send whole response if possible (see #174)
                 self._client_sock.send(result)
             elif isinstance(result, str):
                 self._client_sock.send(result.encode("utf-8"))
-            else:
+            else: # fall back to sending byte-by-byte
                 for data in result:
-                    if isinstance(result, bytes):
-                        self._client_sock.send(result)
+                    if isinstance(data, bytes):
+                        self._client_sock.send(data)
                     else:
-                        self._client_sock.send(result.encode("utf-8"))
+                        self._client_sock.send(data.encode("utf-8"))
             gc.collect()
         finally:
             if self._debug > 2:
@@ -169,6 +174,7 @@ class WSGIServer:
         The application callable will be given this method as the second param
         This is to be called before the application callable returns, to signify
         the response can be started with the given status and headers.
+
         :param string status: a status string including the code and reason. ex: "200 OK"
         :param list response_headers: a list of tuples to represent the headers.
             ex ("header-name", "header value")
@@ -183,6 +189,7 @@ class WSGIServer:
         """
         The application callable will be given the resulting environ dictionary.
         It contains metadata about the incoming request and the request body ("wsgi.input")
+
         :param Socket client: socket to read the request from
         """
         env = {}
