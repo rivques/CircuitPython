@@ -97,6 +97,7 @@ class WSGIServer:
         if self._client_sock and self._client_sock.available():
             environ = self._get_environ(self._client_sock)
             result = self.application(environ, self._start_response)
+            print(f"update result is {result}, type is {type(result)}")
             self.finish_response(result)
 
     def finish_response(self, result):
