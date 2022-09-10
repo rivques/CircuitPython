@@ -6,7 +6,7 @@ from adafruit_esp32spi import adafruit_esp32spi
 import adafruit_requests as requests
 from adafruit_io.adafruit_io import IO_HTTP, AdafruitIO_RequestError
 from secrets import secrets
-import adafruit_esp32spi.adafruit_esp32spi_wsgiserver as server
+import lib.my_wsgi as server
 import neopixel
 from adafruit_wsgi.wsgi_app import WSGIApp
 
