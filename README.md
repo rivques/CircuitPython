@@ -17,3 +17,10 @@ Servo|Metro
 Power|5V
 Signal|D7
 Ground|Ground
+## `internet_servo.py`
+Host a webpage over which you can control a servo. Circuitry:
+Servo|Metro
+---|----
+Power|5V
+Signal|D7
+Ground|Ground

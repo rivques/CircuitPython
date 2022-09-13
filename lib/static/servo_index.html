@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Servo</title>
+</head>
+<body>
+    <label>Servo angle:</label>
+    <input id="servo" value="90" type="range" min="0" max="180">
+    <script>
+        document.querySelectorAll("input[type=\"range\"]").forEach(element => {
+            element.addEventListener("change", () => {
+                console.log("Changed!")
+                fetch(`/servo/${document.getElementById("servo").value}`)
+            })
+        });
+    </script>
+</body>
+</html>
