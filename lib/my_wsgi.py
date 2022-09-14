@@ -30,6 +30,7 @@ https://www.python.org/dev/peps/pep-0333/
 
 import io
 import gc
+import time
 from micropython import const
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 
@@ -76,6 +77,7 @@ class WSGIServer:
 
         self._response_status = None
         self._response_headers = []
+        self.times = []
 
     def start(self):
         """
@@ -99,10 +101,14 @@ class WSGIServer:
         check for new incoming client requests. When a request comes in,
         the application callable will be invoked.
         """
+        self.times = [time.monotonic()]
         self.client_available()
+        self.times.append(time.monotonic())
         if self._client_sock and self._client_sock.available():
             environ = self._get_environ(self._client_sock)
+            self.times.append(time.monotonic())
             result = self.application(environ, self._start_response)
+            self.times.append(time.monotonic())
             self.finish_response(result)
 
     def finish_response(self, result):
@@ -118,7 +124,9 @@ class WSGIServer:
             for header in self._response_headers:
                 response += "{0}: {1}\r\n".format(*header)
             response += "\r\n"
+            self.times.append(time.monotonic())
             self._client_sock.send(response.encode("utf-8"))
+            self.times.append(time.monotonic())
             if isinstance(result, bytes): # send whole response if possible (see #174)
                 self._client_sock.send(result)
             elif isinstance(result, str):
@@ -129,11 +137,15 @@ class WSGIServer:
                         self._client_sock.send(data)
                     else:
                         self._client_sock.send(data.encode("utf-8"))
+            self.times.append(time.monotonic())
             gc.collect()
         finally:
             if self._debug > 2:
                 print("closing")
             self._client_sock.close()
+            self.times.append(time.monotonic())
+            for time in self.times:
+                print(time-self.times[0], end=", ")
 
     def client_available(self):
         """
