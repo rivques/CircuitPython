@@ -6,7 +6,7 @@ from adafruit_esp32spi import adafruit_esp32spi
 import adafruit_requests as requests
 from adafruit_io.adafruit_io import IO_HTTP, AdafruitIO_RequestError
 from secrets import secrets
-import lib.my_wsgi as server
+import adafruit_esp32spi.adafruit_esp32spi_wsgiserver as server
 import neopixel
 from adafruit_wsgi.wsgi_app import WSGIApp
 from adafruit_motor import servo
@@ -14,17 +14,17 @@ import pwmio
 
 status_light = neopixel.NeoPixel(
     board.NEOPIXEL, 1, brightness=0.2
-)
-pwm = pwmio.PWMOut(board.D7, duty_cycle=2 ** 15, frequency=50)
+) # a status light for the wifi connection
+pwm = pwmio.PWMOut(board.D7, duty_cycle=2 ** 15, frequency=50) # the pwm object for the servo
 
-my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500) #custom pulse lengths because our servos are *special*
 
 # If you are using a board with pre-defined ESP32 Pins:
 esp32_cs = DigitalInOut(board.ESP_CS)
 esp32_ready = DigitalInOut(board.ESP_BUSY)
 esp32_reset = DigitalInOut(board.ESP_RESET)
 
-spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+spi = busio.SPI(board.SCK, board.MOSI, board.MISO) # comms w/ esp32
 esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
 
 print("Connecting to AP...")
@@ -36,23 +36,23 @@ while not esp.is_connected:
         continue
 print("Connected to", str(esp.ssid, "utf-8"), "\tRSSI:", esp.rssi)
 
-socket.set_interface(esp)
+socket.set_interface(esp) # use the esp32 instead of the default (non-existent) builtin wifi
 requests.set_socket(socket, esp)
 
 web_app = WSGIApp()
 
 
-@web_app.route("/servo/<angle>")
+@web_app.route("/servo/<angle>") # a request here sets the servo to the rquested angle
 def led_on(request, angle):  # pylint: disable=unused-argument
     print("servo set!")
     my_servo.angle = int(angle)
     return ("200 OK", [], "servo on!")
 
 
-@web_app.route("/")
+@web_app.route("/") # the homepage
 def index(request):
     print("index!")
-    with open("lib/static/servo_index.html") as f:
+    with open("lib/static/servo_index.html") as f: # collect the file into one big string
         print("getting HTML...")
         html =  ''.join(f.readlines())
     print("got HTML")

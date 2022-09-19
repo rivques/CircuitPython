@@ -10,10 +10,10 @@
     <label>Servo angle:</label>
     <input id="servo" value="90" type="range" min="0" max="180">
     <script>
-        document.querySelectorAll("input[type=\"range\"]").forEach(element => {
+        document.querySelectorAll("input[type=\"range\"]").forEach(element => { // set this event listener for all range inputs
             element.addEventListener("change", () => {
                 console.log("Changed!")
-                fetch(`/servo/${document.getElementById("servo").value}`)
+                fetch(`/servo/${document.getElementById("servo").value}`) // tell the server to change the angle
             })
         });
     </script>

@@ -12,7 +12,7 @@ This assignment was just a test to make sure that everything was runing correctl
 ## `servo.py`, `internet_servo.py`
 A basic servo motor control test and a website to control a servo.
 ### Assignment
-For this assignment, we had to make a servo sweep across its length. There was an option make the servo controllable with capacitive touch, but because the new boards we are using do not support that natively (instead requiring a supplemental 1MOhm resistor) I decited to make the servo controllable over the internet instead.
+For this assignment, we had to make a servo sweep across its length. There was an option make the servo controllable with capacitive touch, but because the new boards we are using do not support that natively (instead requiring a supplemental 1MOhm resistor) I decided to make the servo controllable over the internet instead.
 ### Circuitry
 Servo|Metro
 ---|----
