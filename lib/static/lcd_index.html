@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT LCD</title>
+</head>
+<body>
+    <div>
+        <label>Screen A</label>
+        <button id="a-count">Count</button>
+        <button id="a-direction">Toggle direction (+)</button>
+    </div>
+    <div>
+        <label>Screen B</label>
+        <button id="b-count">Count</button>
+        <button id="b-direction">Toggle direction (+)</button>
+    </div>
+    <script>
+        let offset = 1;
+        document.getElementById("a-count").addEventListener("click", () => {
+            fetch(`/a-offset/${offset}`);
+        })
+        document.getElementById("a-direction").addEventListener("click", () => {
+            if(offset > 0){
+                offset = -1
+                document.getElementById("a-direction").textContent = "Toggle direction (-)"
+            } else {
+                offset = 1
+                document.getElementById("a-direction").textContent = "Toggle direction (+)"
+            }
+        })
+        document.getElementById("b-count").addEventListener("click", () => {
+            fetch(`/b-offset/${offset}`);
+        })
+        document.getElementById("b-direction").addEventListener("click", () => {
+            if(offset > 0){
+                offset = -1
+                document.getElementById("b-direction").textContent = "Toggle direction (-)"
+            } else {
+                offset = 1
+                document.getElementById("b-direction").textContent = "Toggle direction (+)"
+            }
+        })
+    </script>
+</body>
+</html>

@@ -40,6 +40,21 @@ Gnd|Ground
 ![The project in action](/docs/hc-sr04.gif)
 ### Reflection
 Originally, I tried to make a method that was very easy to extend and modify, but it ended up taking too much time for a non-functional product. I pivoted to doing it the easy-to-write, hard-to-modify way and finished it in no time.
+## `lcd.py`, `internet_lcd.py`
+Allows control of a pair of LCD screens over a website
+### Assignment
+For this assignment, we had to make 1 or 2 LCD screens display a count that was controllable by some input method. I wanted to test my internet code, so I chose to control it over IoT.
+### Circuitry
+LCD-A (address 0x27)|LCD-B (address 0x3F)|Metro
+---|---|---
+SDA|SDA|SDA
+SCL|SCL|SCL
+VCC|VCC|5V
+GND|GND|GND
+### Media
+![The project in action](/docs/IoT-LCD.gif)
+### Reflection
+This went of relatively easily because of how adaptable my internet code is. I'm very proud of how simple it is to drop it into a new application and be up and running with only a few lines of code. I was also able to use a test bench I made last year to quickly detect the address of any given LCD screen, so it was nice to be able to reuse an old project as a useful time saver.
 
 # Experiments
 ## `helloworld.py`
