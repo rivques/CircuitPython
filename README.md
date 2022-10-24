@@ -5,6 +5,8 @@ Fooling around with various CircuitPython features on a Metro M4 Airlift Lite.
 A basic test of the M4's onboard NeoPixel. Flashes through off, red, green, and blue.
 ### Assignment
 For this assignment, we just had to make the onboard neopixel change colors.
+### Code
+The code is available at </neopixel.py>. For the sake of space it will not be pasted in full here.
 ### Media
 ![The project in action](/docs/neopixel.gif)
 ### Reflection
@@ -13,6 +15,8 @@ This assignment was just a test to make sure that everything was runing correctl
 A basic servo motor control test and a website to control a servo.
 ### Assignment
 For this assignment, we had to make a servo sweep across its length. There was an option make the servo controllable with capacitive touch, but because the new boards we are using do not support that natively (instead requiring a supplemental 1MOhm resistor) I decided to make the servo controllable over the internet instead.
+### Code
+The code is available at </servo.py> and </internet_servo.py>. For the sake of space it will not be pasted in full here.
 ### Circuitry
 ![The circuitry](/docs/servocircuit.png)
 ### Media
@@ -25,6 +29,8 @@ Fades the onboard NeoPixel through different colors depending on the distance de
 For this assignment, we had to make the NeoPixel on board the Metro change color according to the following diagram:
 
 ![A labeled color gradient](/docs/color%20spectrum.png)
+### Code
+The code is available at </hcsr04.py>. For the sake of space it will not be pasted in full here.
 ### Circuitry
 ![The circuitry](/docs/hcsr04circuit.png)
 ### Media
@@ -35,6 +41,8 @@ Originally, I tried to make a method that was very easy to extend and modify, bu
 Allows control of a pair of LCD screens over a website
 ### Assignment
 For this assignment, we had to make 1 or 2 LCD screens display a count that was controllable by some input method. I wanted to test my internet code, so I chose to control it over IoT.
+### Code
+The code is available at </lcd.py> and </internet_lcd.py>. For the sake of space it will not be pasted in full here.
 ### Circuitry
 ![The circuitry](/docs/lcdcircuit.png)
 ### Media
