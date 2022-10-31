@@ -3,11 +3,11 @@ import analogio
 import pwmio
 import board
 import digitalio
+import countio
+import asyncio
 
 pot = analogio.AnalogIn(board.A0)
 motor_pin = pwmio.PWMOut(board.D5)
-photointerruptor = digitalio.DigitalInOut(board.D7)
-photointerruptor.direction = digitalio.Direction.INPUT
 
 def map(x, in_min, in_max, out_min, out_max): # thanks arduino
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
@@ -28,34 +28,57 @@ class PIDController:
         return result
 
 class MotorController:
-    def __init__(self, motor_pin: pwmio.PWMOut, photo_pin: digitalio.DigitalInOut, pulses_per_rot: int):
+    def __init__(self, motor_pin: pwmio.PWMOut, photo_pin, pulses_per_rot: int):
         self.motor_pin = motor_pin
         self.photo_pin = photo_pin
         self.pulses_per_rot = pulses_per_rot
         self.last_photo_val = False
         self.last_measure_time = time.monotonic()
         self.num_ticks: int = 0
+        self.last_ticks: int = 0
+        self.current_speed = 0
 
     
-    def update(self):
+    async def update(self):
         # call every loop to poll photointerruptor
-        if self.photo_pin.value != self.last_photo_val:
-            self.last_photo_val = self.photo_pin.value
-            self.num_ticks += 1
+        with countio.Counter(self.photo_pin, pull=digitalio.Pull.UP) as interrupt:
+            while True:
+                if interrupt.count > 0:
+                    self.num_ticks += interrupt.count
+                    interrupt.count = 0
+                # Let another task run.
+                await asyncio.sleep(0)
     
-    def get_speed(self):
+    def update_speed(self):
         mins_since_last_measurement = (time.monotonic()-self.last_measure_time)/60
         self.last_measure_time = time.monotonic()
-        rots_since_last_measurement = self.num_ticks/self.pulses_per_rot
-        return rots_since_last_measurement/mins_since_last_measurement
+        rots_since_last_measurement = (self.num_ticks-self.last_ticks)/self.pulses_per_rot
+        self.last_ticks = self.num_ticks
+        self.current_speed =  rots_since_last_measurement/mins_since_last_measurement
+    
+    def set_duty_cycle(self, new_duty_cycle):
+        self.motor_pin.duty_cycle = new_duty_cycle
 
-motor = MotorController(motor_pin, photointerruptor, 5)
-
-try:
+motor = MotorController(motor_pin, board.D7, 5)
+motorPID = PIDController(50,0,0)
+async def display_info():
     while True:
-        time.sleep(.01)
-        print(f"Actual speed: {motor.get_speed()}")
-except KeyboardInterrupt:
-    pot.deinit()
-    motor.deinit()
-    photointerruptor.deinit()
+        target_speed = map(pot.value, 0, 65535, 0, 6000)
+        motorPID.target_speed = target_speed
+        motor_speed = motor.current_speed
+        print(f"{motor_speed}, {motor.motor_pin.duty_cycle}, {target_speed}")
+        await asyncio.sleep(0.1)
+
+async def update_motor_pid():
+    while True:
+        motor.update_speed()
+        motor.set_duty_cycle(motorPID.calculate(motor.current_speed))
+        await asyncio.sleep(0.1)
+
+async def main():
+    motor_update_task = asyncio.create_task(motor.update())
+    print_speed_task = asyncio.create_task(display_info())
+    update_motor_duty_cycle_task = asyncio.create_task(update_motor_pid())
+    await asyncio.gather(motor_update_task, print_speed_task, update_motor_duty_cycle_task)
+
+asyncio.run(main())
