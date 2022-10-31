@@ -53,6 +53,7 @@ motor = MotorController(motor_pin, photointerruptor, 5)
 
 try:
     while True:
+        time.sleep(.01)
         print(f"Actual speed: {motor.get_speed()}")
 except KeyboardInterrupt:
     pot.deinit()
