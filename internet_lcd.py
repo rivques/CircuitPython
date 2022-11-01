@@ -16,11 +16,11 @@ from adafruit_character_lcd.character_lcd_i2c import Character_LCD_I2C
 i2c = board.I2C()
 
 # some LCDs are 0x3f... some are 0x27.
-# but now i'm tsting new backpacks with addresses 0x70-77!
-lcdA = Character_LCD_I2C(i2c, 16, 2, 0x71)
+# but now i'm tsting new backpacks with addresses 0x20-27!
+lcdA = Character_LCD_I2C(i2c, 16, 2, 0x20)
 lcdANum = 0
 
-lcdB = Character_LCD_I2C(i2c, 16, 2, 0x70)
+lcdB = Character_LCD_I2C(i2c, 16, 2, 0x21)
 lcdBNum = 0
 
 # If you are using a board with pre-defined ESP32 Pins:
@@ -82,9 +82,9 @@ print("open this IP in your browser: ", esp.pretty_ip(esp.ip_address))
 
 def printToLcd(lcd, offset, lcdNum):
     lcd.clear()
-    lcd.print(str(lcdNum))
-    lcd.cursor_position(1,15)
-    lcd.print("+" if offset > 0 else "-")
+    lcd.message = str(lcdNum)
+    lcd.cursor_position(15,1)
+    lcd.message = ("+" if offset > 0 else "-")
 
 # print(esp.get_time())
 printToLcd(lcdA, 1, lcdANum)
