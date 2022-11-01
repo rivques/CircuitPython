@@ -10,17 +10,17 @@ import adafruit_esp32spi.adafruit_esp32spi_wsgiserver as server
 import neopixel
 from adafruit_wsgi.wsgi_app import WSGIApp
 from adafruit_motor import servo
-from lcd.lcd import LCD
-from lcd.i2c_pcf8574_interface import I2CPCF8574Interface
+from adafruit_character_lcd.character_lcd_i2c import Character_LCD_I2C
 
 # get an i2c object
 i2c = board.I2C()
 
 # some LCDs are 0x3f... some are 0x27.
-lcdA = LCD(I2CPCF8574Interface(i2c, 0x27), num_rows=2, num_cols=16)
+# but now i'm tsting new backpacks with addresses 0x70-77!
+lcdA = Character_LCD_I2C(i2c, 16, 2, 0x71)
 lcdANum = 0
 
-lcdB = LCD(I2CPCF8574Interface(i2c, 0x3f), num_rows=2, num_cols=16)
+lcdB = Character_LCD_I2C(i2c, 16, 2, 0x70)
 lcdBNum = 0
 
 # If you are using a board with pre-defined ESP32 Pins:
@@ -83,7 +83,7 @@ print("open this IP in your browser: ", esp.pretty_ip(esp.ip_address))
 def printToLcd(lcd, offset, lcdNum):
     lcd.clear()
     lcd.print(str(lcdNum))
-    lcd.set_cursor_pos(1,15)
+    lcd.cursor_position(1,15)
     lcd.print("+" if offset > 0 else "-")
 
 # print(esp.get_time())
